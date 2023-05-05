@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -191,7 +192,9 @@ func (client *VKClient) ListenLongPollServerWithCancel(cancelCtx context.Context
 
 		body, err := client.longpollRequest(server)
 		if err != nil {
-			log.Printf("longpoll request failed: %s", err)
+			if !strings.Contains(err.Error(), "context deadline exceeded") {
+				log.Printf("longpoll request failed: %s", err)
+			}
 			time.Sleep(time.Second * 5)
 			continue
 		}
