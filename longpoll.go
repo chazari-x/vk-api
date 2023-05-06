@@ -192,7 +192,8 @@ func (client *VKClient) ListenLongPollServerWithCancel(cancelCtx context.Context
 
 		body, err := client.longpollRequest(server)
 		if err != nil {
-			if !strings.Contains(err.Error(), "context deadline exceeded") {
+			if !strings.Contains(err.Error(), "context deadline exceeded") &&
+				!strings.Contains(err.Error(), "i/o timeout") {
 				log.Printf("longpoll request failed: %s", err)
 			}
 			time.Sleep(time.Second * 5)
