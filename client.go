@@ -80,10 +80,10 @@ func newVKClientBlank(limitrate bool) *VKClient {
 	}
 }
 
-func NewVKClient(device int, user string, password string, limitrate bool) (*VKClient, error) {
+func NewVKClient(device int, user string, password string, code string, limitrate bool) (*VKClient, error) {
 	vkclient := newVKClientBlank(limitrate)
 
-	token, err := vkclient.auth(device, user, password)
+	token, err := vkclient.auth(device, user, password, code)
 	if err != nil {
 		return nil, err
 	}
@@ -191,7 +191,7 @@ func (s *ratelimiter) Update() {
 	s.lastRequestTime = time.Now()
 }
 
-func (client *VKClient) auth(device int, user string, password string) (Token, error) {
+func (client *VKClient) auth(device int, user string, password string, code string) (Token, error) {
 	client.rl.Wait()
 	req, err := http.NewRequest("GET", tokenURL, nil)
 	if err != nil {
@@ -223,6 +223,7 @@ func (client *VKClient) auth(device int, user string, password string) (Token, e
 	q.Add("client_secret", clientSecret)
 	q.Add("username", user)
 	q.Add("password", password)
+	q.Add("code", code)
 	q.Add("v", apiVersion)
 	req.URL.RawQuery = q.Encode()
 
